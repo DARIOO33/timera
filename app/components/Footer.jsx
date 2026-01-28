@@ -29,39 +29,9 @@ const Footer = () => {
                         </p>
                     </div>
 
-                    {/* Navigation */}
-                    <div>
-                        <h3 className="font-serif text-lg font-semibold mb-4">Navigation</h3>
-                        <ul className="space-y-2">
-                            {['Accueil', 'Collections', 'Hommes', 'Femmes', 'Notre Histoire'].map((item, i) => (
-                                <li key={i}>
-                                    <Link
-                                        href={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
-                                        className="text-gray-400 hover:text-amber-500 transition-colors text-sm"
-                                    >
-                                        {item}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
 
-                    {/* Service Client */}
-                    <div>
-                        <h3 className="font-serif text-lg font-semibold mb-4">Service Client</h3>
-                        <ul className="space-y-2">
-                            {['Contact', 'Livraison', 'Retours & Échanges', 'FAQ', 'Garantie'].map((item, i) => (
-                                <li key={i}>
-                                    <Link
-                                        href={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
-                                        className="text-gray-400 hover:text-amber-500 transition-colors text-sm"
-                                    >
-                                        {item}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+
+
 
                     {/* Contact + Social */}
                     <div>
