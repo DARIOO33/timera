@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/app/context/CartContext';
+import Image from 'next/image';
 import {
     ShoppingBag,
     Menu,
@@ -61,8 +62,11 @@ const Header = () => {
                         {/* Logo - Enhanced with proper sizing */}
                         <Link href="/" className="flex items-center space-x-3 group">
                             <div className="w-36 h-12 md:w-40 md:h-14 relative overflow-hidden">
-                                <img
-                                    src={"logo.png"}
+                                <Image
+                                    width={500}
+                                    height={500}
+
+                                    src="/logo.png"
                                     alt="TimEra - Horlogerie d'exception"
                                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                                 />
