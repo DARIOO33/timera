@@ -41,20 +41,19 @@ const FeaturedCollections = () => {
         }
     ];
 
-
     return (
-        <section className="py-16 lg:py-24 bg-gray-50">
+        <section className="py-16 lg:py-24 bg-white">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-4">
+                    <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[#0E2B1F] mb-4">
                         Nos Collections
                     </h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+                    <p className="text-[#12362A] max-w-2xl mx-auto text-lg">
                         Découvrez nos trois lignes de collections, chacune incarnant une vision distincte de l&apos;excellence horlogère.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3  gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {collections.map((collection) => {
                         const isDisabled = collection.disabled;
 
@@ -64,7 +63,7 @@ const FeaturedCollections = () => {
                                 href={isDisabled ? '#' : collection.href}
                                 className={`group block ${isDisabled ? 'pointer-events-none opacity-80' : ''}`}
                             >
-                                <div className="relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                                <div className="relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-[#12362A]/10">
 
                                     {/* IMAGE */}
                                     <div className="relative aspect-square overflow-hidden">
@@ -76,21 +75,25 @@ const FeaturedCollections = () => {
               ${isDisabled ? 'grayscale' : 'group-hover:scale-110'}`}
                                         />
 
-                                        {/* Gradient overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+                                        {/* Gradient overlay - changed to green gradient */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#0E2B1F]/60 via-[#12362A]/30 to-transparent" />
 
                                         {/* Subtitle */}
                                         {collection.subtitle && (
                                             <div className="absolute bottom-4 left-4 text-white">
-                                                <p className="text-sm uppercase tracking-widest opacity-80">
+                                                <p className="text-sm uppercase tracking-widest opacity-90">
                                                     {collection.subtitle}
                                                 </p>
                                             </div>
                                         )}
 
-                                        {/* Label badge */}
+                                        {/* Label badge - changed to gold */}
                                         {collection.label && (
-                                            <span className="absolute top-4 left-4 bg-amber-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+                                            <span className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full shadow
+                                                ${isDisabled
+                                                    ? 'bg-gray-400 text-white'
+                                                    : 'bg-[#D4AF37] text-[#0E2B1F]'
+                                                }`}>
                                                 {collection.label}
                                             </span>
                                         )}
@@ -99,30 +102,34 @@ const FeaturedCollections = () => {
                                     {/* CONTENT */}
                                     <div className="p-6">
                                         <div className="flex justify-between items-center mb-2">
-                                            <h3 className="text-xl font-serif font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">
+                                            <h3 className={`text-xl font-serif font-semibold transition-colors
+                                                ${isDisabled
+                                                    ? 'text-[#12362A]'
+                                                    : 'text-[#0E2B1F] group-hover:text-[#D4AF37]'
+                                                }`}>
                                                 {collection.title}
                                             </h3>
 
                                             {collection.count > 0 && (
-                                                <span className="text-xs text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                                <span className="text-xs text-[#12362A] bg-[#12362A]/10 px-3 py-1 rounded-full">
                                                     {collection.count} modèle{collection.count > 1 && 's'}
                                                 </span>
                                             )}
                                         </div>
 
-                                        <p className="text-gray-600 text-sm mb-5 leading-relaxed">
+                                        <p className="text-[#12362A] text-sm mb-5 leading-relaxed">
                                             {collection.description}
                                         </p>
 
                                         {/* CTA */}
                                         <div className="flex items-center justify-between">
                                             {!isDisabled ? (
-                                                <div className="flex items-center text-amber-600 font-medium">
+                                                <div className="flex items-center text-[#D4AF37] font-medium group-hover:text-[#C8A24A] transition-colors">
                                                     <span>Découvrir</span>
                                                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                                 </div>
                                             ) : (
-                                                <span className="text-sm text-gray-400 italic">
+                                                <span className="text-sm text-[#12362A]/60 italic">
                                                     Bientôt disponible
                                                 </span>
                                             )}
@@ -132,7 +139,6 @@ const FeaturedCollections = () => {
                             </Link>
                         );
                     })}
-
                 </div>
             </div>
         </section>

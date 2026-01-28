@@ -28,12 +28,12 @@ const CartSidebar = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100">
                     <div className="flex items-center space-x-3">
-                        <ShoppingBag className="w-6 h-6 text-gray-700" />
-                        <h2 className="text-xl font-serif font-semibold text-gray-900">
+                        <ShoppingBag className="w-6 h-6 text-[#0E2B1F]" />
+                        <h2 className="text-xl font-serif font-semibold text-[#0E2B1F]">
                             Votre Panier
                         </h2>
                         {totalItems > 0 && (
-                            <span className="bg-gray-100 text-gray-600 text-sm px-2 py-1 rounded-full">
+                            <span className="bg-[#12362A]/10 text-[#12362A] text-sm px-2 py-1 rounded-full">
                                 {totalItems} article{totalItems > 1 ? 's' : ''}
                             </span>
                         )}
@@ -42,25 +42,24 @@ const CartSidebar = () => {
                         onClick={closeCart}
                         className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
                     >
-                        <X className="w-5 h-5 text-gray-500" />
+                        <X className="w-5 h-5 text-[#12362A]" />
                     </button>
                 </div>
 
                 {/* Cart Items */}
                 <div className="flex-1 overflow-y-auto p-6 overscroll-contain">
-
                     {items.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-64 text-center">
                             <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                            <h3 className="text-lg font-medium text-[#0E2B1F] mb-2">
                                 Votre panier est vide
                             </h3>
-                            <p className="text-gray-500 mb-6">
+                            <p className="text-[#12362A] mb-6">
                                 Ajoutez des pièces d'exception à votre collection
                             </p>
                             <button
                                 onClick={closeCart}
-                                className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                                className="bg-[#0E2B1F] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#12362A] transition-colors"
                             >
                                 Découvrir les collections
                             </button>
@@ -90,14 +89,14 @@ const CartSidebar = () => {
                                     <div className="flex-1">
                                         <div className="flex justify-between">
                                             <div>
-                                                <h3 className="font-medium text-gray-900">{item.name}</h3>
+                                                <h3 className="font-medium text-[#0E2B1F]">{item.name}</h3>
                                                 {item.sku && (
-                                                    <p className="text-sm text-gray-500 mt-1">Ref: {item.sku}</p>
+                                                    <p className="text-sm text-[#12362A] mt-1">Ref: {item.sku}</p>
                                                 )}
                                             </div>
                                             <button
                                                 onClick={() => removeFromCart(item.id)}
-                                                className="text-gray-400 hover:text-red-500 transition-colors"
+                                                className="text-[#12362A] hover:text-red-500 transition-colors"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -108,16 +107,16 @@ const CartSidebar = () => {
                                             <div className="flex items-center border border-gray-200 rounded-lg">
                                                 <button
                                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    className="p-2 hover:bg-gray-50 transition-colors"
+                                                    className="p-2 hover:bg-gray-50 transition-colors text-[#12362A]"
                                                 >
                                                     <Minus className="w-4 h-4" />
                                                 </button>
-                                                <span className="px-4 py-2 text-gray-900 font-medium">
+                                                <span className="px-4 py-2 text-[#0E2B1F] font-medium">
                                                     {item.quantity}
                                                 </span>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    className="p-2 hover:bg-gray-50 transition-colors"
+                                                    className="p-2 hover:bg-gray-50 transition-colors text-[#12362A]"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                 </button>
@@ -125,10 +124,10 @@ const CartSidebar = () => {
 
                                             {/* Price */}
                                             <div className="text-right">
-                                                <p className="text-lg font-semibold text-gray-900">
+                                                <p className="text-lg font-semibold text-[#0E2B1F]">
                                                     {(item.price * item.quantity).toFixed(2)} TND
                                                 </p>
-                                                <p className="text-sm text-gray-500">
+                                                <p className="text-sm text-[#12362A]">
                                                     {item.price.toFixed(2)} TND par unité
                                                 </p>
                                             </div>
@@ -145,18 +144,18 @@ const CartSidebar = () => {
                     <div className="border-t border-gray-100 p-6">
                         {/* Order Summary */}
                         <div className="space-y-3 mb-6">
-                            <div className="flex justify-between text-gray-600">
+                            <div className="flex justify-between text-[#12362A]">
                                 <span>Sous-total</span>
                                 <span>{totalPrice.toFixed(2)} TND</span>
                             </div>
-                            <div className="flex justify-between text-gray-600">
+                            <div className="flex justify-between text-[#12362A]">
                                 <span>Livraison</span>
-                                <span className="text-amber-600 font-medium">
+                                <span className="text-[#D4AF37] font-medium">
                                     {totalPrice >= 500 ? 'OFFERTE' : '7.00 TND'}
                                 </span>
                             </div>
                             <div className="pt-3 border-t border-gray-100">
-                                <div className="flex justify-between text-lg font-semibold text-gray-900">
+                                <div className="flex justify-between text-lg font-semibold text-[#0E2B1F]">
                                     <span>Total</span>
                                     <span>
                                         {totalPrice >= 500
@@ -173,20 +172,20 @@ const CartSidebar = () => {
                             <Link
                                 href="/checkout"
                                 onClick={closeCart}
-                                className="block bg-black text-white text-center py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                                className="block bg-[#0E2B1F] text-white text-center py-3 rounded-lg font-medium hover:bg-[#12362A] transition-colors"
                             >
                                 Commander maintenant
                             </Link>
                             <Link
                                 href="/cart"
                                 onClick={closeCart}
-                                className="block border border-gray-300 text-gray-700 text-center py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                                className="block border border-[#12362A] text-[#12362A] text-center py-3 rounded-lg font-medium hover:bg-[#12362A]/5 transition-colors"
                             >
                                 Voir le panier détaillé
                             </Link>
                             <button
                                 onClick={closeCart}
-                                className="text-gray-500 hover:text-gray-700 text-center py-3 w-full"
+                                className="text-[#12362A] hover:text-[#0E2B1F] text-center py-3 w-full transition-colors"
                             >
                                 Continuer vos achats
                             </button>

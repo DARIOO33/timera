@@ -1,23 +1,61 @@
 // app/checkout/page.js
 'use client';
-
+import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useCart } from '@/app/context/CartContext';
-import Link from 'next/link';
-import { ArrowLeft, Lock, Check, Truck, Shield } from 'lucide-react';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import { useMemo } from 'react';
 import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import EmptyCart from './components/EmptyCart';
+import { PulseLoader, ScaleLoader, ClipLoader } from 'react-spinners';
+
+import OrderSuccess from './components/OrderSuccess';
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 const CheckoutPage = () => {
-    const { items, totalPrice, clearCart } = useCart();
-    const [step, setStep] = useState(1);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { items, totalPrice, clearCart, closeCart } = useCart();
     const [orderComplete, setOrderComplete] = useState(false);
-    const [orderNumber, setOrderNumber] = useState('');
     const [cart, setCart] = useState([])
     const [total, setTotal] = useState(0)
+    const [subtotal, setSubtotal] = useState(0)
+    const [products, setProducts] = useState({})
+    const [cityList, setCityList] = useState([])
+    const [city, setCity] = useState(null)
+    const [ville, setVille] = useState(null)
+    const [customerName, setCustomerName] = useState("")
+    const [customerPhone, setCustomerPhone] = useState("")
+    const [customerEmail, setCustomerEmail] = useState("")
+    const [customerStreet, setCustomerStreet] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const wilayatTunisie = [
+        "Tunis",
+        "Ariana",
+        "Ben Arous",
+        "Manouba",
+        "Nabeul",
+        "Zaghouan",
+        "Bizerte",
+        "Beja",
+        "Jendouba",
+        "Kef",
+        "Siliana",
+        "Sousse",
+        "Monastir",
+        "Mahdia",
+        "Sfax",
+        "Kairouan",
+        "Kasserine",
+        "Sidi Bouzid",
+        "Gabes",
+        "Medenine",
+        "Tataouine",
+        "Gafsa",
+        "Tozeur",
+        "Kebili"
+    ];
+
     useEffect(() => {
+        closeCart()
         const localcart = typeof window !== "undefined"
             ? JSON.parse(localStorage.getItem("timera_cart")) || []
             : []
@@ -29,232 +67,293 @@ const CheckoutPage = () => {
     }, [])
 
     // Form state
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        address: '',
-        city: '',
-        postal: '',
-        email: '',
-        notes: ''
-    });
+
+    const handleChange = async (event, newValue) => {
+        setCity(newValue);
+        if (!newValue) {
+            setCityList([]);
+            return;
+        }
+        const res = await fetch(`/api/municipalities?name=${newValue}`);
+        const data = await res.json();
+        setCityList(data[0]?.Delegations || []);
+    };
 
     const [errors, setErrors] = useState({});
 
     // Validate form
-    const validateForm = () => {
-        const newErrors = {};
-        if (!formData.name.trim()) newErrors.name = 'Nom requis';
-        if (!formData.phone.trim()) newErrors.phone = 'Téléphone requis';
-        if (!formData.address.trim()) newErrors.address = 'Adresse requise';
-        if (!formData.city.trim()) newErrors.city = 'Ville requise';
-        if (!formData.postal.trim()) newErrors.postal = 'Code postal requis';
 
-        // Phone validation (Tunisian)
-        const phoneRegex = /^(\+216|00216)?[2-9][0-9]{7}$/;
-        if (formData.phone && !phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
-            newErrors.phone = 'Numéro invalide';
-        }
-
-        // Email validation (optional)
-        if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Email invalide';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (customerName == "" || customerPhone == "" || city == null || ville == null) {
+            alert("All Fileds Required")
+            return
+        }
+        setIsLoading(true)
+        const customerAddresse = (customerStreet == "" ?
+            `${ville.Name} ${ville.PostalCode} ${city} ` :
+            `${customerStreet} ${ville.Name} ${ville.PostalCode} ${city}   `
+        );
+        let cartItems = [];
 
-        if (!validateForm()) return;
-
-        setIsSubmitting(true);
+        items.forEach(element => {
+            cartItems.push({
+                product: element.id,
+                quantity: element.quantity
+            });
+        });
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            setIsLoading(true); // Start loading
 
-            // Generate order number
-            const newOrderNumber = 'CMD-' + Date.now().toString().slice(-8);
-            setOrderNumber(newOrderNumber);
+            const res = await fetch(`${API_URL}/api/order`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    customerName,
+                    customerEmail,
+                    customerNumber: customerPhone,
+                    customerAddresse,
+                    items: cartItems,
+                }),
+            });
 
-            // Clear cart and show success
-            clearCart();
-            setOrderComplete(true);
+            const data = await res.json();
 
+            if (!res.ok) {
+                // Show error from server
+                alert(data.message || "Une erreur est survenue.");
+            } else {
+                // Success
+                alert("Commande créée avec succès !");
+                setTotal(data.total);
+                setSubtotal(data.subTotal)
+                setProducts(data.orderDetails);
+                clearCart()
+                setOrderComplete(true);
+
+            }
         } catch (error) {
-            console.error('Error:', error);
-            alert('Une erreur est survenue');
+            console.error("Order submission failed:", error);
+            alert("Impossible de passer la commande. Veuillez réessayer plus tard.");
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false); // Always stop loading
         }
+
+
+
+
+
+
+
+
+
+
+    };
+    const handlePhoneChange = (e) => {
+        let v = e.target.value.replace(/\D/g, ''); // keep digits only
+
+        // limit to 8 digits
+        if (v.length > 8) return;
+
+        // validate first digit
+        if (v.length === 1 && !/^[234579]$/.test(v)) return;
+
+        setCustomerPhone(v);
+    };
+    const handleEmailChange = (e) => {
+        let v = e.target.value;
+
+        // remove spaces
+        v = v.replace(/\s/g, '');
+
+        // allow only email-safe characters
+        if (!/^[a-zA-Z0-9@._+-]*$/.test(v)) return;
+
+        setCustomerEmail(v);
     };
 
+
+    const uniqueCities = useMemo(() => {
+        if (!Array.isArray(cityList)) return [];
+        const seen = new Set();
+
+        return cityList.filter((c) => {
+            const key = c.Name?.trim().toLowerCase();
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }, [cityList]);
     // Empty cart
     if (items.length === 0 && !orderComplete) {
         return (
-            <div className="bg-white min-h-screen flex items-center justify-center px-4">
-                <div className="text-center max-w-md">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Lock className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h1 className="text-2xl font-medium text-gray-900 mb-4">
-                        Votre panier est vide
-                    </h1>
-                    <p className="text-gray-600 mb-8">
-                        Ajoutez des produits pour continuer.
-                    </p>
-                    <Link
-                        href="/collections"
-                        className="inline-block bg-black text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-                    >
-                        Voir les collections
-                    </Link>
-                </div>
-            </div>
+            <EmptyCart />
         );
     }
+    //loading
 
     // Order complete
     if (orderComplete) {
         return (
-            <div className="min-h-screen flex items-center justify-center px-4 py-12">
-                <div className="max-w-md w-full">
-                    <div className="text-center">
-                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <Check className="w-8 h-8 text-green-600" />
-                        </div>
-                        <h1 className="text-2xl font-medium text-gray-900 mb-3">
-                            Commande confirmée
-                        </h1>
-                        <div className="text-lg text-amber-600 font-medium mb-8">
-                            {orderNumber}
-                        </div>
-
-                        <div className="bg-gray-50 rounded-xl p-6 mb-8 text-left">
-                            <div className="space-y-4">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Total</span>
-                                    <span className="font-medium text-gray-900">
-                                        {(totalPrice + 7).toFixed(2)} TND
-                                    </span>
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                    Livraison: 7.00 TND
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="text-gray-600 text-sm mb-8">
-                            Notre équipe vous contactera sous 24h.
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Link
-                                href="/collections"
-                                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors text-center"
-                            >
-                                Continuer
-                            </Link>
-                            <Link
-                                href="/"
-                                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center"
-                            >
-                                Accueil
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <OrderSuccess total={total} products={products} subtotal={subtotal} />
         );
     }
 
     return (
         <div className="min-h-screen bg-white">
-            <h1 className='text-gray-900 text-center font-extrabold font-serif py-3 text-3xl '>complétez votre commande</h1>
+            <h1 className='text-[#0E2B1F] text-center font-extrabold font-serif py-3 text-3xl '>
+                complétez votre commande
+            </h1>
             <div className='px-4'>
                 <Grid container spacing={2} >
                     <Grid size={{ xs: 12, md: 8 }}>
-                        <form className="relative bg-white rounded-2xl p-6 shadow-lg space-y-5 ">
-                            <p className="font-serif text-lg font-semibold text-gray-900">
+                        <form className="relative bg-white rounded-2xl p-6 shadow-lg space-y-5 border border-[#12362A]/10">
+                            <p className="font-serif text-lg font-semibold text-[#0E2B1F]">
                                 Informations de livraison
                             </p>
 
                             {/* Full Name */}
                             <div className="py-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-[#12362A] mb-1">
                                     Nom complet <span className="text-red-500">*</span>
                                 </label>
                                 <input
+                                    value={customerName}
+                                    onChange={(e) => setCustomerName(e.target.value)}
                                     type="text"
                                     placeholder="Ex : Mohamed Ben Ali"
-                                    className="text-gray-800 w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                                    className="text-[#0E2B1F] w-full rounded-xl border border-[#12362A]/30 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-colors"
                                     required
                                 />
                             </div>
 
                             {/* Phone Number */}
                             <div className="py-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-[#12362A] mb-1">
                                     Numéro de téléphone <span className="text-red-500">*</span>
                                 </label>
                                 <input
+                                    value={customerPhone}
+                                    onChange={handlePhoneChange}
                                     type="tel"
                                     placeholder="Ex : 22 123 456"
-                                    className="text-gray-800 w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                                    className="text-[#0E2B1F] w-full rounded-xl border border-[#12362A]/30 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-colors"
                                     required
                                 />
                             </div>
 
                             {/* Email */}
                             <div className="py-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Email
+                                <label className="block text-sm font-medium text-[#12362A] mb-1">
+                                    Email <span className='text-xs text-[#12362A]/70'>( optionnel )</span>
                                 </label>
                                 <input
+                                    value={customerEmail}
+                                    onChange={handleEmailChange}
                                     type="email"
                                     placeholder="Ex : exemple@email.com"
-                                    className="text-gray-800 w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                                    className="text-[#0E2B1F] w-full rounded-xl border border-[#12362A]/30 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-colors"
                                 />
                             </div>
 
-                            {/* Address */}
-                            <div className="py-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Adresse <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Rue, immeuble, appartement…"
-                                    className="text-gray-800 w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                                    required
-                                />
+                            {/*  Gouvernorat + City */}
+                            <div className="flex flex-col md:flex-row gap-4">
+                                {/* Gouvernorat */}
+                                <div className="w-full">
+                                    <label className="block text-sm font-medium text-[#12362A] mb-1">
+                                        Gouvernorat <span className="text-red-500">*</span>
+                                    </label>
+                                    <Autocomplete
+                                        disablePortal
+                                        value={city}
+                                        options={wilayatTunisie}
+                                        onChange={handleChange}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                placeholder="Selectionner"
+                                                size="small"
+                                                fullWidth
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: '12px',
+                                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                            borderColor: '#12362A',
+                                                        },
+                                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                            borderColor: '#D4AF37',
+                                                            borderWidth: '2px',
+                                                        },
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Ville */}
+                                <div className="w-full">
+                                    <label className="block text-sm font-medium text-[#12362A] mb-1">
+                                        Ville <span className="text-red-500">*</span>
+                                    </label>
+                                    <Autocomplete
+                                        options={uniqueCities}
+                                        value={ville}
+                                        onChange={(event, newValue) => setVille(newValue)}
+                                        getOptionLabel={(option) => option.Name}
+                                        isOptionEqualToValue={(option, value) =>
+                                            option.Name === value.Name
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                placeholder="Ex : Tunis"
+                                                size="small"
+                                                fullWidth
+                                                required
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: '12px',
+                                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                            borderColor: '#12362A',
+                                                        },
+                                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                            borderColor: '#D4AF37',
+                                                            borderWidth: '2px',
+                                                        },
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </div>
                             </div>
 
-                            {/* City */}
-                            <div className="py-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Ville <span className="text-red-500">*</span>
+                            <div className="py-2">
+                                <label className="block text-sm font-medium text-[#12362A] mb-1">
+                                    Adresse détaillée <span className='text-xs text-[#12362A]/70'>( optionnel )</span>
                                 </label>
                                 <input
+                                    value={customerStreet}
+                                    onChange={(e) => setCustomerStreet(e.target.value)}
                                     type="text"
-                                    placeholder="Ex : Tunis"
-                                    className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black text-gray-800"
-                                    required
+                                    placeholder="Rue, immeuble, étage, appartement, bureau…"
+                                    className="text-[#0E2B1F] w-full rounded-xl border border-[#12362A]/30 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-colors"
                                 />
                             </div>
                         </form>
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <div className="sticky top-6 bg-white rounded-2xl p-6 shadow-xl border border-gray-100 space-y-6">
-
+                        <div className="sticky top-6 bg-white rounded-2xl p-6 shadow-xl border border-[#12362A]/10 space-y-6">
                             {/* Header with enhanced styling */}
-                            <div className="pb-4 border-b border-gray-200">
-                                <h3 className="font-serif text-xl font-bold text-gray-900">
+                            <div className="pb-4 border-b border-[#12362A]/20">
+                                <h3 className="font-serif text-xl font-bold text-[#0E2B1F]">
                                     Récapitulatif de la commande
                                 </h3>
                             </div>
@@ -264,34 +363,34 @@ const CheckoutPage = () => {
                                 {cart.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0 group hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                                        className="flex items-center gap-4 pb-4 border-b border-[#12362A]/10 last:border-b-0 last:pb-0 group hover:bg-[#12362A]/5 p-2 rounded-lg transition-colors"
                                     >
                                         <div className="relative flex-shrink-0">
                                             <img
                                                 src={item.image}
                                                 alt={item.name}
-                                                className="w-16 h-16 rounded-lg object-cover border-2 border-gray-100 shadow-sm"
+                                                className="w-16 h-16 rounded-lg object-cover border-2 border-[#12362A]/10 shadow-sm"
                                             />
-                                            <span className="absolute -top-2 -right-2 bg-gray-900 text-white text-xs font-semibold w-6 h-6 rounded-full flex items-center justify-center">
+                                            <span className="absolute -top-2 -right-2 bg-[#0E2B1F] text-white text-xs font-semibold w-6 h-6 rounded-full flex items-center justify-center">
                                                 {item.quantity}
                                             </span>
                                         </div>
 
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-semibold text-gray-800 truncate">
+                                            <p className="text-sm font-semibold text-[#0E2B1F] truncate">
                                                 {item.name}
                                             </p>
-                                            <p className="text-xs text-gray-500 mt-1">
+                                            <p className="text-xs text-[#12362A] mt-1">
                                                 Quantité : {item.quantity}
                                             </p>
                                         </div>
 
                                         <div className="text-right">
-                                            <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">
+                                            <p className="text-sm font-semibold text-[#0E2B1F] whitespace-nowrap">
                                                 {(item.price * item.quantity).toFixed(2)} DT
                                             </p>
                                             {item.quantity > 1 && (
-                                                <p className="text-xs text-gray-400 mt-1">
+                                                <p className="text-xs text-[#12362A] mt-1">
                                                     {item.price.toFixed(2)} DT × {item.quantity}
                                                 </p>
                                             )}
@@ -302,23 +401,22 @@ const CheckoutPage = () => {
 
                             {/* Pricing section with better visual separation */}
                             <div className="space-y-4 pt-2">
-                                <div className="flex justify-between items-center py-3 border-t border-gray-200">
-                                    <p className="text-sm font-medium text-gray-700">
+                                <div className="flex justify-between items-center py-3 border-t border-[#12362A]/20">
+                                    <p className="text-sm font-medium text-[#12362A]">
                                         Livraison
                                     </p>
-                                    <p className="text-sm font-semibold text-gray-900">
+                                    <p className="text-sm font-semibold text-[#0E2B1F]">
                                         7.00 DT
                                     </p>
                                 </div>
 
-                                <div className="flex justify-between items-center py-4 border-t border-gray-200">
+                                <div className="flex justify-between items-center py-4 border-t border-[#12362A]/20">
                                     <div>
-                                        <p className="text-lg font-bold text-gray-900">
+                                        <p className="text-lg font-bold text-[#0E2B1F]">
                                             Total à payer
                                         </p>
-
                                     </div>
-                                    <p className="text-2xl font-bold text-gray-900">
+                                    <p className="text-2xl font-bold text-[#0E2B1F]">
                                         {(total + 7).toFixed(2)} DT
                                     </p>
                                 </div>
@@ -326,21 +424,48 @@ const CheckoutPage = () => {
 
                             {/* Enhanced CTA button */}
                             <div className="pt-2">
-                                <Link
-                                    href="/checkout"
-                                    className="block bg-black text-white text-center py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                                <button
+                                    onClick={(e) => handleSubmit(e)}
+                                    disabled={isLoading}
+                                    className="group relative flex items-center justify-center w-full px-4 bg-gradient-to-r from-[#0E2B1F] to-[#12362A] text-white text-center py-3.5 rounded-lg font-medium transition-all duration-300 hover:from-[#12362A] hover:to-[#0E2B1F] disabled:opacity-80 disabled:cursor-not-allowed disabled:hover:from-[#0E2B1F] disabled:hover:to-[#12362A] overflow-hidden"
                                 >
-                                    Commander maintenant
-                                </Link>
-                            </div>
+                                    {/* Shimmer effect on hover */}
+                                    {!isLoading && (
+                                        <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-shimmer" />
+                                    )}
 
+                                    <span className="relative flex items-center justify-center">
+                                        {isLoading ? (
+                                            <>
+                                                <ClipLoader
+                                                    color="#ffffff"
+                                                    size={20}
+                                                    speedMultiplier={0.8}
+                                                    className="mr-3"
+                                                />
+                                                <span className="font-medium tracking-wide">Validation de votre commande...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="font-medium tracking-wide">Commander maintenant</span>
+                                                <svg
+                                                    className="ml-3 w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                </svg>
+                                            </>
+                                        )}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </Grid>
-
-
                 </Grid>
             </div>
-        </div >
+        </div>
     );
 };
 

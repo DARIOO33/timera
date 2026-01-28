@@ -1,11 +1,12 @@
 // app/products/[id]/page.js
 import ProductDetail from '@/app/components/ProductDetail';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 export async function generateMetadata({ params }) {
     const { id } = await params;
 
     // Fetch product data
-    const response = await fetch(`http://localhost:5001/api/product/${id}`, {
+    const response = await fetch(`${API_URL}/api/product/${id}`, {
         cache: 'no-store'
     });
 
@@ -23,12 +24,11 @@ export async function generateMetadata({ params }) {
         description: product.description || `Montre ${product.name} de la collection ${product.collection}`,
     };
 }
-
 export default async function ProductPage({ params }) {
     const { id } = await params;
 
     // Fetch product data
-    const response = await fetch(`http://localhost:5001/api/product/${id}`, {
+    const response = await fetch(`${API_URL}/api/product/${id}`, {
         cache: 'no-store'
     });
 

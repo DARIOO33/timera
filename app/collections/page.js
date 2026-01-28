@@ -5,10 +5,10 @@ export const metadata = {
     title: 'Collections - TimEra',
     description: 'Découvrez nos collections de montres de luxe',
 };
-
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 export default async function CollectionsPage() {
     // Fetch all products
-    const response = await fetch('http://localhost:5001/api/product', {
+    const response = await fetch(`${API_URL}/api/product`, {
         cache: 'no-store'
     });
 
@@ -24,13 +24,13 @@ export default async function CollectionsPage() {
     return (
         <div className="min-h-screen bg-white">
             {/* Hero Section for Collections */}
-            <div className="bg-gradient-to-b from-gray-50 to-white py-16 lg:py-24">
+            <div className="bg-gradient-to-b from-[#12362A]/5 to-white py-16 lg:py-24">
                 <div className="container mx-auto px-4">
                     <div className="text-center max-w-3xl mx-auto">
-                        <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-6">
+                        <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0E2B1F] mb-6">
                             Nos Collections
                         </h1>
-                        <p className="text-gray-600 text-lg md:text-xl mb-8">
+                        <p className="text-[#12362A] text-lg md:text-xl mb-8">
                             Découvrez nos trois lignes de collections exclusives,
                             chacune incarnant une vision distincte de l&apos;excellence horlogère.
                         </p>

@@ -43,7 +43,7 @@ const CollectionsGrid = ({ collections }) => {
                             href={`/collections/${collection.id}`}
                             className="group block"
                         >
-                            <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                            <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-[#12362A]/10">
                                 <div className="relative aspect-[4/3] overflow-hidden">
                                     <Image
                                         src={collection.featured}
@@ -52,10 +52,11 @@ const CollectionsGrid = ({ collections }) => {
                                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                    {/* Changed gradient to green palette */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E2B1F]/50 via-[#12362A]/30 to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 p-6">
                                         <div className="text-white">
-                                            <div className="text-sm text-amber-300 font-medium mb-1">
+                                            <div className="text-sm text-[#D4AF37] font-medium mb-1">
                                                 {collection.count} modèles
                                             </div>
                                             <h3 className="text-2xl font-serif font-semibold">
@@ -65,10 +66,10 @@ const CollectionsGrid = ({ collections }) => {
                                     </div>
                                 </div>
                                 <div className="p-6">
-                                    <p className="text-gray-600 mb-4">
+                                    <p className="text-[#12362A] mb-4">
                                         {collection.description}
                                     </p>
-                                    <div className="flex items-center text-amber-600 font-medium">
+                                    <div className="flex items-center text-[#D4AF37] font-medium group-hover:text-[#C8A24A] transition-colors">
                                         <span>Explorer la collection</span>
                                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                     </div>

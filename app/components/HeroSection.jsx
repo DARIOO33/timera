@@ -1,4 +1,3 @@
-// app/components/HeroSection.js
 'use client';
 
 import React, { useRef } from 'react';
