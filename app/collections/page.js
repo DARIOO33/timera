@@ -1,4 +1,3 @@
-// app/collections/page.js
 import CollectionsGrid from '@/app/components/CollectionsGrid';
 
 export const metadata = {

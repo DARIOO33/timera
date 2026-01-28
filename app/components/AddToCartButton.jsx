@@ -1,4 +1,3 @@
-// app/components/AddToCartButton.js
 'use client';
 
 import { useCart } from '@/app/context/CartContext';

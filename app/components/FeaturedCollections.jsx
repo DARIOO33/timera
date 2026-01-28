@@ -1,4 +1,3 @@
-// app/components/FeaturedCollections.js
 'use client';
 
 import React from 'react';

@@ -1,4 +1,3 @@
-// app/collections/[collection]/page.js
 import CollectionProducts from '@/app/components/CollectionProducts';
 
 export async function generateMetadata({ params }) {

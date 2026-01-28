@@ -1,4 +1,3 @@
-// app/checkout/page.js
 'use client';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';

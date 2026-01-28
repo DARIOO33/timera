@@ -1,4 +1,3 @@
-// app/components/CollectionProducts.js
 'use client';
 
 import ProductCard from '@/app/components/ProductCard';

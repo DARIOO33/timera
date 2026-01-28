@@ -1,4 +1,3 @@
-// app/components/ProductDetail.js
 'use client';
 
 import React, { useEffect, useState } from 'react';
