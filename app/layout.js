@@ -6,8 +6,29 @@ import './globals.css';
 import Footer from './components/Footer';
 
 export const metadata = {
-  title: 'TimEra - Horlogerie d\'exception',
-  description: 'Montres de luxe et accessoires horlogers',
+  title: {
+    default: 'TimEra – Montres & Horlogerie en Tunisie',
+    template: '%s | TimEra',
+  },
+  description:
+    'Boutique tunisienne de montres pour homme et femme. Paiement en TND, livraison rapide sur toute la Tunisie.',
+  keywords: [
+    'montres Tunisie',
+    'montre homme',
+    'montre femme',
+    'horlogerie Tunisie',
+    'montres en ligne',
+    'TimEra',
+  ],
+  openGraph: {
+    title: 'TimEra – Montres en Tunisie',
+    description:
+      'Découvrez notre collection de montres élégantes avec livraison partout en Tunisie.',
+    url: 'https://timera.tn',
+    siteName: 'TimEra',
+    locale: 'fr_TN',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }) {
