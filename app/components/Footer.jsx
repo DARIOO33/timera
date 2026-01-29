@@ -36,15 +36,15 @@ const Footer = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                         <div className="flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#12362A]/30">
                             <Shield className="w-8 h-8 text-[#D4AF37]" />
-                            <span className="text-sm font-medium text-white">Garantie 5 ans</span>
+                            <span className="text-sm font-medium text-white">Haute Qualite</span>
                         </div>
                         <div className="flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#12362A]/30">
                             <Truck className="w-8 h-8 text-[#D4AF37]" />
-                            <span className="text-sm font-medium text-white">Livraison 24h</span>
+                            <span className="text-sm font-medium text-white">Livraison 24h-48h</span>
                         </div>
                         <div className="flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#12362A]/30">
                             <CreditCard className="w-8 h-8 text-[#D4AF37]" />
-                            <span className="text-sm font-medium text-white">Paiement sécurisé</span>
+                            <span className="text-sm font-medium text-white">paiement à la livraison</span>
                         </div>
                     </div>
                 </div>
