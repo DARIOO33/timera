@@ -126,7 +126,7 @@ const Footer = () => {
                                 <h4 className="font-medium mb-4 text-white">Suivez-nous</h4>
                                 <div className="flex space-x-3">
                                     {[
-                                        { Icon: Facebook, label: 'Facebook', href: "https://www.instagram.com/timera.tn/" },
+                                        { Icon: Facebook, label: 'Facebook', href: "https://www.facebook.com/profile.php?id=61586085346246" },
                                         { Icon: Instagram, label: 'Instagram', href: "https://www.instagram.com/timera.tn/" },
                                     ].map(({ Icon, label, href }) => (
                                         <a
