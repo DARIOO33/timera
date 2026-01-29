@@ -109,16 +109,16 @@ const Footer = () => {
                         <div className="space-y-4">
                             <div className="flex items-start space-x-3">
                                 <MapPin className="w-5 h-5 text-[#D4AF37] mt-0.5 flex-shrink-0" />
-                                <span className="text-white/80 text-sm">Tunis, Tunisie</span>
+                                <span className="text-white/80 text-sm">Djerba , Mednine , Tunisie</span>
                             </div>
                             <div className="flex items-center space-x-3">
                                 <Phone className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                                <span className="text-white/80 text-sm">+216 12 345 678</span>
+                                <span className="text-white/80 text-sm">+216 </span>
                             </div>
                             <div className="flex items-center space-x-3">
                                 <Mail className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
                                 <a href="mailto:contact@timera.tn" className="text-white/80 hover:text-[#D4AF37] transition-colors text-sm">
-                                    contact@timera.tn
+
                                 </a>
                             </div>
 
