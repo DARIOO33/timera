@@ -131,6 +131,7 @@ const Footer = () => {
                                     ].map(({ Icon, label, href }) => (
                                         <a
                                             key={label}
+                                            target='_blank'
                                             href={href}
                                             className="w-10 h-10 bg-[#12362A] hover:bg-[#D4AF37] rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                                             aria-label={label}
