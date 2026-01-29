@@ -4,6 +4,7 @@ import Header from './components/Header';
 import CartSidebar from './components/CartSidebar';
 import './globals.css';
 import Footer from './components/Footer';
+import toast, { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: {
@@ -36,6 +37,8 @@ export default function RootLayout({ children }) {
     <html lang="fr">
       <body>
         <CartProvider>
+          <Toaster
+            position="top-right" />
           <Header />
           <CartSidebar />
           <main>{children}</main>

@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import EmptyCart from './components/EmptyCart';
 import { PulseLoader, ScaleLoader, ClipLoader } from 'react-spinners';
-
+import toast from 'react-hot-toast';
 import OrderSuccess from './components/OrderSuccess';
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 const CheckoutPage = () => {
@@ -87,7 +87,7 @@ const CheckoutPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (customerName == "" || customerPhone == "" || city == null || ville == null) {
-            alert("All Fileds Required")
+            toast.error("All Fileds Required")
             return
         }
         setIsLoading(true)
@@ -125,10 +125,10 @@ const CheckoutPage = () => {
 
             if (!res.ok) {
                 // Show error from server
-                alert(data.message || "Une erreur est survenue.");
+                toast.error(data.message || "Une erreur est survenue.");
             } else {
                 // Success
-                alert("Commande créée avec succès !");
+                toast.success("Commande créée avec succès !");
                 setTotal(data.total);
                 setSubtotal(data.subTotal)
                 setProducts(data.orderDetails);
@@ -138,7 +138,7 @@ const CheckoutPage = () => {
             }
         } catch (error) {
             console.error("Order submission failed:", error);
-            alert("Impossible de passer la commande. Veuillez réessayer plus tard.");
+            toast.error("Impossible de passer la commande. Veuillez réessayer plus tard.");
         } finally {
             setIsLoading(false); // Always stop loading
         }
