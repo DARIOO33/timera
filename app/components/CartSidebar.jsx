@@ -175,13 +175,13 @@ const CartSidebar = () => {
                             >
                                 Commander maintenant
                             </Link>
-                            <Link
+                            {/* <Link
                                 href="/cart"
                                 onClick={closeCart}
                                 className="block border border-[#12362A] text-[#12362A] text-center py-3 rounded-lg font-medium hover:bg-[#12362A]/5 transition-colors"
                             >
                                 Voir le panier détaillé
-                            </Link>
+                            </Link> */}
                             <button
                                 onClick={closeCart}
                                 className="text-[#12362A] hover:text-[#0E2B1F] text-center py-3 w-full transition-colors"
