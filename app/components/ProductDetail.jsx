@@ -185,12 +185,27 @@ const ProductDetail = ({ product }) => {
 
                         {/* Price */}
                         <div className="mb-6">
-                            <div className="text-3xl md:text-4xl font-bold text-[#0E2B1F]">
-                                {product.price} TND
-                            </div>
-                            <div className="text-sm text-[#12362A] mt-1">
-                                TVA incluse • Paiement à la livraison disponible
-                            </div>
+                            {product.originalPrice ? (
+                                <div className="flex items-center gap-3">
+                                    <div className="flex flex-col">
+                                        <div className="text-3xl md:text-4xl font-bold text-[#0E2B1F]">
+                                            {product.price} TND
+                                        </div>
+                                        <div className="text-lg text-gray-500 line-through">
+                                            {product.originalPrice} TND
+                                        </div>
+                                    </div>
+                                    {product.originalPrice && (
+                                        <span className="bg-red-100 text-red-800 text-sm font-semibold px-2 py-1 rounded">
+                                            {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+                                        </span>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-3xl md:text-4xl font-bold text-[#0E2B1F]">
+                                    {product.price} TND
+                                </div>
+                            )}
                         </div>
 
                         {/* Stock Status */}
