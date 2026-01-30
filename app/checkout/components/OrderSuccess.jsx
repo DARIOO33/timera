@@ -95,8 +95,8 @@ const OrderSuccess = ({ orderNumber, total, products, subtotal }) => (
             {/* Order Note */}
             <div className="mt-8 pt-6 border-t border-[#12362A]/10">
                 <p className="text-xs text-[#12362A]/70">
-                    Une confirmation de commande vous a été envoyée par SMS.
-                    Conservez votre numéro de commande <span className="font-medium text-[#D4AF37]">{orderNumber}</span> pour tout suivi.
+                    Une confirmation de commande vous a été envoyée par Mail.
+
                 </p>
             </div>
         </div>
