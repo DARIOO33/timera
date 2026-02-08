@@ -4,8 +4,9 @@ import Header from './components/Header';
 import CartSidebar from './components/CartSidebar';
 import './globals.css';
 import Footer from './components/Footer';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import Script from 'next/script';
+
 export const metadata = {
   title: {
     default: 'TimEra – Montres & Horlogerie en Tunisie',
@@ -13,29 +14,14 @@ export const metadata = {
   },
   description:
     'Boutique tunisienne de montres pour homme et femme. Paiement en TND, livraison rapide sur toute la Tunisie.',
-  keywords: [
-    'montres Tunisie',
-    'montre homme',
-    'montre femme',
-    'horlogerie Tunisie',
-    'montres en ligne',
-    'TimEra',
-  ],
-  openGraph: {
-    title: 'TimEra – Montres en Tunisie',
-    description:
-      'Découvrez notre collection de montres élégantes avec livraison partout en Tunisie.',
-    url: 'https://timera.tn',
-    siteName: 'TimEra',
-    locale: 'fr_TN',
-    type: 'website',
-  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body>
+
+        {/* Meta Pixel */}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
@@ -60,14 +46,15 @@ export default function RootLayout({ children }) {
             src="https://www.facebook.com/tr?id=796632352707426&ev=PageView&noscript=1"
           />
         </noscript>
+
         <CartProvider>
-          <Toaster
-            position="top-right" />
+          <Toaster position="top-right" />
           <Header />
           <CartSidebar />
           <main>{children}</main>
           <Footer />
         </CartProvider>
+
       </body>
     </html>
   );
