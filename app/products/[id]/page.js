@@ -8,7 +8,7 @@ export async function generateMetadata({ params }) {
 
 
     const response = await fetch(`${API_URL}/api/product/${id}`, {
-        cache: 'no-store'  // completely bypass cache
+        next: { revalidate: 3600 }
     });
 
 
@@ -69,7 +69,7 @@ export default async function ProductPage({ params }) {
     const { id } = await params;
 
     const response = await fetch(`${API_URL}/api/product/${id}`, {
-        next: { revalidate: 3600 }
+        cache: 'no-store'
     });
 
     if (!response.ok) {
