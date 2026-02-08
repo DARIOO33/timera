@@ -10,6 +10,8 @@ import EmptyCart from './components/EmptyCart';
 import { PulseLoader, ScaleLoader, ClipLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
 import OrderSuccess from './components/OrderSuccess';
+import { fbPixel } from '@/app/lib/fpixel';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 const CheckoutPage = () => {
     const { items, totalPrice, clearCart, closeCart } = useCart();
@@ -133,6 +135,11 @@ const CheckoutPage = () => {
                 setSubtotal(data.subTotal)
                 setProducts(data.orderDetails);
                 clearCart()
+                fbPixel.track('Purchase', {
+                    value: Number(total),            // total purchase amount
+                    currency: 'TND',                                    // your currency
+                    content_type: 'product',
+                });
                 setOrderComplete(true);
 
             }

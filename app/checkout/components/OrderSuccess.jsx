@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ShieldCheck, Check } from 'lucide-react';
-
 const OrderSuccess = ({ orderNumber, total, products, subtotal }) => (
+
     <div className="bg-white min-h-screen flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full text-center">
             {/* ✅ Success Icon */}
