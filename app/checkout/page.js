@@ -136,10 +136,11 @@ const CheckoutPage = () => {
                 setProducts(data.orderDetails);
                 clearCart()
                 fbPixel.track('Purchase', {
-                    value: Number(total),            // total purchase amount
-                    currency: 'TND',                                    // your currency
+                    value: Number(data.total),
+                    currency: 'TND',
                     content_type: 'product',
                 });
+
                 setOrderComplete(true);
 
             }

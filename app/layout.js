@@ -19,11 +19,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
-      <body>
 
-        {/* Meta Pixel */}
-        <Script id="meta-pixel" strategy="afterInteractive">
-          {`
+      {/* Meta Pixel */}
+      <Script id="meta-pixel" strategy="afterInteractive">
+        {`
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -35,18 +34,19 @@ export default function RootLayout({ children }) {
             fbq('init', '1677105643270199');
             fbq('track', 'PageView');
           `}
-        </Script>
+      </Script>
 
-        {/* NoScript fallback */}
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=1677105643270199&ev=PageView&noscript=1"
-          />
-        </noscript>
+      {/* NoScript fallback */}
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style={{ display: 'none' }}
+          src="https://www.facebook.com/tr?id=1677105643270199&ev=PageView&noscript=1"
+        />
+      </noscript>
 
+      <body>
         <CartProvider>
           <Toaster position="top-right" />
           <Header />
