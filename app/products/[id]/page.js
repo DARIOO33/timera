@@ -7,7 +7,10 @@ export async function generateMetadata({ params }) {
     console.log(id);
 
 
-    const response = await fetch(`${API_URL}/api/product/${id}`);
+    const response = await fetch(`${API_URL}/api/product/${id}`, {
+        cache: 'no-store'  // completely bypass cache
+    });
+
 
     if (!response.ok) {
         return {
