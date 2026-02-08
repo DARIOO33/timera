@@ -7,9 +7,7 @@ export async function generateMetadata({ params }) {
     console.log(id);
 
 
-    const response = await fetch(`${API_URL}/api/product/${id}`, {
-        next: { revalidate: 3600 }
-    });
+    const response = await fetch(`${API_URL}/api/product/${id}`);
 
     if (!response.ok) {
         return {
