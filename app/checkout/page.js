@@ -32,7 +32,7 @@ const CheckoutPage = () => {
         "Tunis",
         "Ariana",
         "Ben Arous",
-        "Manouba",
+        "Mannouba",
         "Nabeul",
         "Zaghouan",
         "Bizerte",
