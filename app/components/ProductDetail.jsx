@@ -32,15 +32,15 @@ const ProductDetail = ({ product }) => {
 
     // 🔥 VIEW CONTENT (IMPORTANT FOR META)
     useEffect(() => {
-        if (!product) return;
+    console.log("VIEWCONTENT TRIGGERED");
 
-        fbPixel.track("ViewContent", {
-            content_ids: [product._id],
-            content_type: "product",
-            value: product.price,
-            currency: "TND",
-        });
-    }, [product]);
+    window.fbq?.("track", "ViewContent", {
+        content_ids: [product._id],
+        content_type: "product",
+        value: product.price,
+        currency: "TND",
+    });
+}, []);
 
     // specs safe parsing
     useEffect(() => {
