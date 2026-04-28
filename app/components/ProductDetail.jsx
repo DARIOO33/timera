@@ -5,52 +5,80 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/app/context/CartContext';
+import { fbPixel } from '@/lib/fpixel';
 import {
     ShoppingBag,
-    Heart,
-    Share2,
-    Truck,
-    Shield,
-    Clock,
     ChevronLeft,
-    Star,
     Check,
     ArrowLeft,
     Package,
-    RotateCcw
+    Clock
 } from 'lucide-react';
 
 const ProductDetail = ({ product }) => {
     const { addToCart, openCart } = useCart();
+    const router = useRouter();
+
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
-    const [isWishlisted, setIsWishlisted] = useState(false);
-    const [specs, setSpecs] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [specs, setSpecs] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const collectionNames = {
+        inox: 'Inox',
+        classique: 'Classique',
+        sport: 'Sport'
+    };
+
+    // 🔥 VIEW CONTENT (IMPORTANT FOR META)
+    useEffect(() => {
+        if (!product) return;
+
+        fbPixel.track("ViewContent", {
+            content_ids: [product._id],
+            content_type: "product",
+            value: product.price,
+            currency: "TND",
+        });
+    }, [product]);
+
+    // specs safe parsing
+    useEffect(() => {
+        if (product?.specs) {
+            setSpecs(product.specs.split("\n"));
+        }
+    }, [product]);
+
+    // ADD TO CART + PIXEL
     const handleAddToCart = () => {
+        fbPixel.track("AddToCart", {
+            content_ids: [product._id],
+            content_type: "product",
+            value: product.price,
+            currency: "TND",
+        });
+
         addToCart({
             id: product._id,
             name: product.name,
             price: product.price,
             image: product.images[0],
-            quantity: quantity,
+            quantity,
             sku: product.sku,
         });
+
         openCart();
     };
-    const router = useRouter()
+
+    // BUY NOW
     const handleBuyNow = () => {
-        setLoading(true)
+        setLoading(true);
+
         setTimeout(() => {
             handleAddToCart();
-            router.push("/checkout")
-        }, 400)
-        // Could navigate directly to checkout here
+            router.push("/checkout");
+        }, 400);
     };
-
-    useEffect(() => {
-        setSpecs(product.specs.split("\n"))
-    }, [])
 
     const features = [
         {
@@ -65,280 +93,135 @@ const ProductDetail = ({ product }) => {
         }
     ];
 
-    const collectionNames = {
-        inox: 'Inox',
-        classique: 'Classique',
-        sport: 'Sport'
-    };
-
     if (loading) {
         return (
             <div className="h-96 w-full flex items-center justify-center bg-black/70">
-                <span className="text-white text-xl font-semibold">Loading...</span>
+                <span className="text-white text-xl font-semibold">
+                    Loading...
+                </span>
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-white">
+
             {/* Breadcrumb */}
             <div className="bg-[#12362A]/5 py-4">
-                <div className="container mx-auto px-4">
-                    <div className="flex items-center space-x-2 text-sm">
-                        <Link href="/" className="text-[#12362A] hover:text-[#D4AF37] transition-colors">
-                            Accueil
-                        </Link>
-                        <ChevronLeft className="w-4 h-4 text-[#12362A]/40 rotate-180" />
-                        <Link href="/collections" className="text-[#12362A] hover:text-[#D4AF37] transition-colors">
-                            Collections
-                        </Link>
-                        <ChevronLeft className="w-4 h-4 text-[#12362A]/40 rotate-180" />
-                        <Link href={`/collections/${product.collection}`} className="text-[#12362A] hover:text-[#D4AF37] transition-colors">
-                            {collectionNames[product.collection]}
-                        </Link>
-                        <ChevronLeft className="w-4 h-4 text-[#12362A]/40 rotate-180" />
-                        <span className="text-[#0E2B1F] font-medium truncate max-w-xs">
-                            {product.name}
-                        </span>
-                    </div>
+                <div className="container mx-auto px-4 flex items-center space-x-2 text-sm">
+                    <Link href="/" className="text-[#12362A]">Accueil</Link>
+                    <ChevronLeft className="w-4 h-4 rotate-180" />
+                    <span className="text-[#0E2B1F]">{product.name}</span>
                 </div>
             </div>
 
-            {/* Back Button - Mobile */}
+            {/* BACK */}
             <div className="lg:hidden px-4 pt-4">
-                <Link
-                    href={`/collections/${product.collection}`}
-                    className="inline-flex items-center text-[#12362A] hover:text-[#0E2B1F] transition-colors"
-                >
+                <Link href="/collections" className="flex items-center">
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Retour
                 </Link>
             </div>
 
-            {/* Product Main Section */}
-            <div className="container mx-auto px-4 py-8">
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-                    {/* Image Gallery */}
-                    <div>
-                        {/* Main Image */}
-                        <div className="bg-gray-50 rounded-2xl overflow-hidden aspect-square mb-4 relative border border-[#12362A]/10">
-                            <Image
-                                src={product.images[selectedImage] || 'https://via.placeholder.com/800x800'}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                                priority
-                            />
+            {/* MAIN */}
+            <div className="container mx-auto px-4 py-8 grid lg:grid-cols-2 gap-10">
 
-                            {/* Badges */}
-                            <div className="absolute top-4 left-4">
-                                <div className="bg-[#0E2B1F]/90 text-white text-sm font-medium px-4 py-2 rounded-full backdrop-blur-sm">
-                                    {collectionNames[product.collection]}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Thumbnail Images */}
-                        {product.images.length > 1 && (
-                            <div className="flex space-x-4 overflow-x-auto py-4">
-                                {product.images.map((image, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setSelectedImage(index)}
-                                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index
-                                            ? 'border-[#D4AF37]'
-                                            : 'border-gray-200 hover:border-[#12362A]/30'
-                                            }`}
-                                    >
-                                        <div className="relative w-full h-full">
-                                            <Image
-                                                src={image}
-                                                alt={`${product.name} - vue ${index + 1}`}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                {/* IMAGES */}
+                <div>
+                    <div className="relative aspect-square bg-gray-50 rounded-xl overflow-hidden">
+                        <Image
+                            src={product.images[selectedImage]}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                        />
                     </div>
 
-                    {/* Product Info */}
-                    <div>
-                        {/* Collection Badge */}
-                        <div className="inline-flex items-center space-x-2 bg-[#D4AF37]/10 text-[#C8A24A] px-4 py-2 rounded-full mb-4 border border-[#D4AF37]/20">
-                            <span className="text-sm font-medium tracking-wider">
-                                COLLECTION {collectionNames[product.collection].toUpperCase()}
-                            </span>
-                        </div>
-
-                        {/* Product Title */}
-                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[#0E2B1F] mb-4">
-                            {product.name}
-                        </h1>
-
-                        {/* SKU */}
-                        <div className="text-[#12362A] mb-6">
-                            Référence: <span className="font-medium">{product.sku}</span>
-                        </div>
-
-                        {/* Price */}
-                        <div className="mb-6">
-                            {product.originalPrice ? (
-                                <div className="flex items-center gap-3">
-                                    <div className="flex flex-col">
-                                        <div className="text-3xl md:text-4xl font-bold text-[#0E2B1F]">
-                                            {product.price} TND
-                                        </div>
-                                        <div className="text-lg text-gray-500 line-through">
-                                            {product.originalPrice} TND
-                                        </div>
-                                    </div>
-                                    {product.originalPrice && (
-                                        <span className="bg-red-100 text-red-800 text-sm font-semibold px-2 py-1 rounded">
-                                            {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                                        </span>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="text-3xl md:text-4xl font-bold text-[#0E2B1F]">
-                                    {product.price} TND
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Stock Status */}
-                        <div className={`mb-6 p-4 rounded-lg ${product.stock > 0
-                            ? 'bg-green-50 text-green-800 border border-green-200'
-                            : 'bg-red-50 text-red-800 border border-red-200'}`}>
-                            <div className="flex items-center">
-                                <Check className="w-5 h-5 mr-2" />
-                                <span className="font-medium">
-                                    {product.stock > 0
-                                        ? `${product.stock} disponible${product.stock > 1 ? 's' : ''} en stock`
-                                        : 'Rupture de stock'}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Quantity Selector */}
-                        <div className="mb-8">
-                            <label className="block text-[#12362A] mb-2">Quantité</label>
-                            <div className="flex items-center max-w-xs">
-                                <button
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="w-12 h-12 border border-[#12362A]/30 rounded-l-lg flex items-center justify-center hover:bg-[#12362A]/5 transition-colors text-[#12362A]"
-                                    disabled={quantity <= 1}
-                                >
-                                    <span className="text-xl">−</span>
-                                </button>
-                                <div className="w-16 h-12 border-t border-b border-[#12362A]/30 flex items-center justify-center">
-                                    <span className="text-lg font-medium text-[#0E2B1F]">{quantity}</span>
-                                </div>
-                                <button
-                                    onClick={() => setQuantity(quantity + 1)}
-                                    className="w-12 h-12 border border-[#12362A]/30 rounded-r-lg flex items-center justify-center hover:bg-[#12362A]/5 transition-colors text-[#12362A]"
-                                    disabled={product.stock > 0 && quantity >= product.stock}
-                                >
-                                    <span className="text-xl">+</span>
-                                </button>
-                            </div>
-                            {product.stock > 0 && (
-                                <p className="text-sm text-[#12362A] mt-2">
-                                    Maximum: {product.stock} unité{product.stock > 1 ? 's' : ''}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <div className="flex gap-3 mt-4">
+                        {product.images.map((img, i) => (
                             <button
-                                onClick={handleAddToCart}
-                                disabled={product.stock <= 0}
-                                className="flex-1 group inline-flex items-center justify-center bg-[#0E2B1F] text-white px-8 py-4 rounded-lg font-medium hover:bg-[#12362A] transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                                key={i}
+                                onClick={() => setSelectedImage(i)}
+                                className={`w-16 h-16 border rounded ${selectedImage === i ? 'border-black' : ''}`}
                             >
-                                <ShoppingBag className="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" />
-                                <span>Ajouter au panier</span>
+                                <Image src={img} width={64} height={64} alt="" />
                             </button>
-
-                            <button
-                                onClick={handleBuyNow}
-                                disabled={product.stock <= 0}
-                                className="flex-1 inline-flex items-center justify-center border-2 border-[#12362A] text-[#12362A] px-8 py-4 rounded-lg font-medium hover:border-[#D4AF37] hover:text-[#D4AF37] hover:bg-[#D4AF37]/5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Acheter maintenant
-                            </button>
-                        </div>
-
-                        {/* Features */}
-                        <div className="grid grid-cols-2 gap-4 mb-8">
-                            {features.map((feature, index) => (
-                                <div key={index} className="flex items-center space-x-3 p-3 bg-[#12362A]/5 rounded-lg border border-[#12362A]/10">
-                                    <div className="p-2 bg-white text-[#D4AF37] rounded-lg">
-                                        {feature.icon}
-                                    </div>
-                                    <div>
-                                        <h4 className="font-medium text-[#0E2B1F]">{feature.title}</h4>
-                                        <p className="text-sm text-[#12362A]">{feature.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Description */}
-                        <div className="border-t border-[#12362A]/20 pt-8">
-                            <h3 className="font-serif text-xl font-semibold text-[#0E2B1F] mb-4">
-                                Description du produit
-                            </h3>
-                            <div className="prose max-w-none text-[#12362A]">
-                                <p>
-                                    La montre {product.name} incarne l&apos;excellence de la collection {collectionNames[product.collection]}.
-                                    Conçue avec des matériaux de première qualité et une attention particulière aux détails,
-                                    cette pièce allie esthétique et fonctionnalité.
-                                </p>
-
-                                <h4 className="font-medium text-[#0E2B1F] mt-6 mb-3">Caractéristiques techniques:</h4>
-                                <ul className="space-y-2">
-                                    {specs.map((s) => (
-                                        <li className="flex items-center" key={s}>
-                                            <Check className="w-5 h-5 text-green-500 mr-2" />
-                                            <span> {s}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
-            </div>
 
-            {/* Related Products Section */}
-            <div className="bg-[#12362A]/5 py-16">
-                <div className="container mx-auto px-4">
-                    <div className="flex justify-between items-center mb-12">
-                        <div>
-                            <h2 className="font-serif text-3xl text-[#0E2B1F] mb-2">
-                                Produits similaires
-                            </h2>
-                            <p className="text-[#12362A]">
-                                Découvrez d&apos;autres modèles de la même collection
-                            </p>
-                        </div>
-                        <Link
-                            href={`/collections/${product.collection}`}
-                            className="text-[#D4AF37] hover:text-[#C8A24A] font-medium transition-colors"
+                {/* INFO */}
+                <div>
+
+                    <h1 className="text-3xl font-bold mb-2">
+                        {product.name}
+                    </h1>
+
+                    <p className="mb-4 text-gray-500">
+                        Ref: {product.sku}
+                    </p>
+
+                    <div className="text-2xl font-bold mb-4">
+                        {product.price} TND
+                    </div>
+
+                    {/* STOCK */}
+                    <div className="mb-4">
+                        <span className="text-green-600">
+                            {product.stock > 0 ? "In stock" : "Out of stock"}
+                        </span>
+                    </div>
+
+                    {/* QTY */}
+                    <div className="flex items-center gap-3 mb-6">
+                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                        <span>{quantity}</span>
+                        <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                    </div>
+
+                    {/* BUTTONS */}
+                    <div className="flex gap-3 mb-6">
+
+                        <button
+                            onClick={handleAddToCart}
+                            className="bg-black text-white px-6 py-3 flex-1"
                         >
-                            Voir toute la collection →
-                        </Link>
+                            <ShoppingBag className="inline w-5 h-5 mr-2" />
+                            Add to cart
+                        </button>
+
+                        <button
+                            onClick={handleBuyNow}
+                            className="border px-6 py-3 flex-1"
+                        >
+                            Buy now
+                        </button>
+
                     </div>
 
-                    {/* Related products would be fetched here */}
-                    <div className="text-center py-12">
-                        <div className="text-[#12362A]">
-                            Chargement des produits similaires...
-                        </div>
+                    {/* FEATURES */}
+                    <div className="space-y-3">
+                        {features.map((f, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                                {f.icon}
+                                <div>
+                                    <p className="font-medium">{f.title}</p>
+                                    <p className="text-sm text-gray-500">{f.desc}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
+
+                    {/* SPECS */}
+                    <ul className="mt-6 space-y-2">
+                        {specs.map((s, i) => (
+                            <li key={i} className="flex items-center gap-2">
+                                <Check className="w-4 h-4 text-green-500" />
+                                {s}
+                            </li>
+                        ))}
+                    </ul>
+
                 </div>
             </div>
         </div>
